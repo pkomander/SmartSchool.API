@@ -11,12 +11,10 @@ namespace SmartSchool.WebAPI.Controllers
     [ApiController]
     public class AlunoController : ControllerBase
     {
-        private readonly DataContext _context;
         private readonly IRepository _repo;
         private readonly IAluno _aluno;
-        public AlunoController(DataContext context, IRepository repo, IAluno aluno)
+        public AlunoController(IRepository repo, IAluno aluno)
         {
-            _context = context;
             _repo = repo;
             _aluno = aluno;
         }
@@ -78,7 +76,7 @@ namespace SmartSchool.WebAPI.Controllers
         {
             try
             {
-                var request = await _context.Alunos.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+                var request = await _aluno.GetAlunoById(id);
                 if (request == null)
                     return BadRequest("Aluno nao encontrado!");
 
@@ -108,7 +106,7 @@ namespace SmartSchool.WebAPI.Controllers
             {
                 //AsNoTracking() - e utilizado para nao bloquear o select para modificacoes no objeto
                 //como nos metodos de update e patch, podendo alterar o estado do objeto sem a necessidade de travalo
-                var request = await _context.Alunos.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+                var request = await _aluno.GetAlunoById(id);
 
                 if (request == null)
                     return BadRequest("Aluno nao encontrado!");
@@ -131,7 +129,7 @@ namespace SmartSchool.WebAPI.Controllers
         {
             try
             {
-                var aluno = await _context.Alunos.FirstOrDefaultAsync(x => x.Id == id);
+                var aluno = await _aluno.GetAlunoById(id);
 
                 if (aluno == null)
                     return BadRequest("Aluno nao encontrado!");

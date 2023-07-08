@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SmartSchool.WebAPI.Data;
+using SmartSchool.WebAPI.Services.Interface;
+using SmartSchool.WebAPI.Services.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(
     context => context.UseSqlite(builder.Configuration.GetConnectionString("Default"))
 );
+
+//injetando dependencias
+builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IAluno, AlunoRepository>();
 
 // Add services to the container.
 

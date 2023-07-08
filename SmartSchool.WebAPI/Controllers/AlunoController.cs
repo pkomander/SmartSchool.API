@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartSchool.WebAPI.Data;
 using SmartSchool.WebAPI.Models;
+using SmartSchool.WebAPI.Services.Interface;
 
 namespace SmartSchool.WebAPI.Controllers
 {
@@ -11,22 +12,27 @@ namespace SmartSchool.WebAPI.Controllers
     public class AlunoController : ControllerBase
     {
         private readonly DataContext _context;
-        public AlunoController(DataContext context)
+        private readonly IRepository _repo;
+        private readonly IAluno _aluno;
+        public AlunoController(DataContext context, IRepository repo, IAluno aluno)
         {
             _context = context;
+            _repo = repo;
+            _aluno = aluno;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var alunos = await _context.Alunos.ToListAsync();
+            //var alunos = await _context.Alunos.ToListAsync();
+            var alunos = await _aluno.GetAlunos();
             return Ok(alunos);
         }
 
         [HttpGet("byId{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.Id == id);
+            var aluno = await _aluno.GetAlunoById(id);
 
             if (aluno == null)
                 return BadRequest("Aluno nao encontrado!");
@@ -37,7 +43,8 @@ namespace SmartSchool.WebAPI.Controllers
         [HttpGet("ByName/{nome}")]
         public async Task<IActionResult> GetByName(string nome)
         {
-            var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.Nome.Contains(nome) || a.Sobrenome.Contains(nome));
+            //var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.Nome.Contains(nome) || a.Sobrenome.Contains(nome));
+            var aluno = await _aluno.GetAlunoByName(nome);
 
             if (aluno == null)
                 return BadRequest("Aluno nao encontrado!");
@@ -53,10 +60,12 @@ namespace SmartSchool.WebAPI.Controllers
                 if (aluno == null)
                     return BadRequest("Objeto Aluno esta null");
 
-                _context.Alunos.Add(aluno);
-                await _context.SaveChangesAsync();
-
-                return Ok(aluno);
+                _repo.Add(aluno);
+                if(await _repo.SaveChanges())
+                {
+                    return Ok("Aluno Cadastrado!");
+                }
+                return BadRequest("Aluno nao cadastrado!");
             }
             catch (Exception ex)
             {
@@ -73,10 +82,18 @@ namespace SmartSchool.WebAPI.Controllers
                 if (request == null)
                     return BadRequest("Aluno nao encontrado!");
 
-                _context.Alunos.Update(aluno);
-                await _context.SaveChangesAsync();
+                //mapeando objeto
+                request.Nome = aluno.Nome;
+                request.Sobrenome = aluno.Sobrenome;
+                request.Telefone = aluno.Telefone;
 
-                return Ok("Atualizado com sucesso!");
+                _repo.Update(request);
+                if (await _repo.SaveChanges())
+                {
+                    return Ok("Atualizado com sucesso!");
+                }
+
+                return BadRequest("Erro ao atualizar aluno!");                
             }
             catch (Exception ex)
             {
@@ -96,10 +113,12 @@ namespace SmartSchool.WebAPI.Controllers
                 if (request == null)
                     return BadRequest("Aluno nao encontrado!");
 
-                _context.Alunos.Update(request);
-                await _context.SaveChangesAsync();
-
-                return Ok(aluno);
+                _repo.Update(request);
+                if (await _repo.SaveChanges())
+                {
+                    return Ok("Atualizado com sucesso!");
+                }
+                return BadRequest("Erro ao atualizar aluno");
             }
             catch (Exception ex)
             {
@@ -117,10 +136,13 @@ namespace SmartSchool.WebAPI.Controllers
                 if (aluno == null)
                     return BadRequest("Aluno nao encontrado!");
 
-                _context.Alunos.Remove(aluno);
-                await _context.SaveChangesAsync();
+                _repo.Delete(aluno);
+                if (await _repo.SaveChanges())
+                {
+                    return Ok("Deletado com sucesso!");
+                }
 
-                return Ok("Aluno deletado com sucesso!");
+                return BadRequest("Erro ao deletar aluno!");
             }
             catch (Exception ex)
             {

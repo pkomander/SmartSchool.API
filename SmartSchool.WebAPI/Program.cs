@@ -14,6 +14,7 @@ builder.Services.AddDbContext<DataContext>(
 //injetando dependencias
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<IAluno, AlunoRepository>();
+builder.Services.AddScoped<IProfessor, ProfessorRepository>();
 
 // Add services to the container.
 

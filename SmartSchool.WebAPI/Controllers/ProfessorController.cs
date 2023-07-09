@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartSchool.WebAPI.Data;
 using SmartSchool.WebAPI.Models;
+using SmartSchool.WebAPI.Services.Interface;
 
 namespace SmartSchool.WebAPI.Controllers
 {
@@ -10,17 +11,20 @@ namespace SmartSchool.WebAPI.Controllers
     [ApiController]
     public class ProfessorController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IProfessor _professor;
+        private readonly IRepository _repository;
 
-        public ProfessorController(DataContext context)
+        public ProfessorController(IProfessor professor, IRepository repository)
         {
-            _context = context;
+            _professor = professor;
+            _repository = repository;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _context.Professores.ToListAsync());
+            var professores = await _professor.GetProfessores();
+            return Ok(professores);
         }
 
         [HttpGet("byId/{id}")]
@@ -28,7 +32,7 @@ namespace SmartSchool.WebAPI.Controllers
         {
             try
             {
-                var professor = await _context.Professores.FirstOrDefaultAsync(x => x.Id == id);
+                var professor = await _professor.GetProfessorById(id);
 
                 if (professor == null)
                 {
@@ -48,7 +52,7 @@ namespace SmartSchool.WebAPI.Controllers
         {
             try
             {
-                var professor = await _context.Professores.FirstOrDefaultAsync(x => x.Nome.Contains(name));
+                var professor = await _professor.GetProfessorByName(name);
 
                 if (professor == null)
                 {
@@ -71,10 +75,13 @@ namespace SmartSchool.WebAPI.Controllers
                 if (professor == null)
                     return BadRequest("Objeto Professor esta null");
 
-                _context.Professores.Add(professor);
-                await _context.SaveChangesAsync();
+                _repository.Add(professor);
+                if(await _repository.SaveChanges())
+                {
+                    return Ok("Professor Cadastrado!");
+                }
 
-                return Ok(professor);
+                return BadRequest("Erro ao tentar adicionar o professor!");
             }
             catch (Exception ex)
             {
@@ -87,14 +94,17 @@ namespace SmartSchool.WebAPI.Controllers
         {
             try
             {
-                var request = await _context.Professores.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+                var request = await _professor.GetProfessorById(id);
                 if (request == null)
                     return BadRequest("Professor nao encontrado!");
 
-                _context.Professores.Update(professor);
-                await _context.SaveChangesAsync();
+                _repository.Update(professor);
+                if (await _repository.SaveChanges())
+                {
+                    return Ok("Professor Cadastrado!");
+                }
 
-                return Ok("Atualizado com sucesso!");
+                return BadRequest("Erro ao tentar atualizar o professor!");
             }
             catch (Exception ex)
             {
@@ -109,15 +119,18 @@ namespace SmartSchool.WebAPI.Controllers
             {
                 //AsNoTracking() - e utilizado para nao bloquear o select para modificacoes no objeto
                 //como nos metodos de update e patch, podendo alterar o estado do objeto sem a necessidade de travalo
-                var request = await _context.Professores.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+                var request = await _professor.GetProfessorById(id);
 
                 if (request == null)
                     return BadRequest("Professor nao encontrado!");
 
-                _context.Professores.Update(request);
-                await _context.SaveChangesAsync();
+                _repository.Update(professor);
+                if (await _repository.SaveChanges())
+                {
+                    return Ok("Professor atualizado!");
+                }
 
-                return Ok("Atualizado com sucesso!");
+                return BadRequest("Erro ao tentar atualizar o professor!");
             }
             catch (Exception ex)
             {
@@ -130,15 +143,18 @@ namespace SmartSchool.WebAPI.Controllers
         {
             try
             {
-                var professor = await _context.Professores.FirstOrDefaultAsync(x => x.Id == id);
+                var professor = await _professor.GetProfessorById(id);
 
                 if (professor == null)
                     return BadRequest("Professor nao encontrado!");
 
-                _context.Professores.Remove(professor);
-                await _context.SaveChangesAsync();
+                _repository.Delete(professor);
+                if (await _repository.SaveChanges())
+                {
+                    return Ok("professor Deletado!");
+                }
 
-                return Ok("Professor deletado com sucesso!");
+                return BadRequest("Erro ao tentar deletar o Professor!");
             }
             catch (Exception ex)
             {

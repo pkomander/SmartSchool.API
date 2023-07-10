@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(
     context => context.UseSqlite(builder.Configuration.GetConnectionString("Default"))
 );
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //injetando dependencias
 builder.Services.AddScoped<IRepository, Repository>();

@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "dxzUHOUKXwSISsMIYqe1RWGAXP+X3QpVPM3JpivdlegskC8Qb4LjoD8RaJTQMOrPg+moN8rEcgxRcyaPYw+tFA==",
+  "dgSpecHash": "5oFMVqlj+3FjkuFbIHnuSLcrGvbMf0dEYlS2znGX4RAtLTfzYTDiQmu74/ateNJM7Yl8g908LkPITJaTtqolfg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Geoex\\Documents\\SmartSchool\\SmartSchool.WebAPI\\SmartSchool.WebAPI\\SmartSchool.WebAPI.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Geoex\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
+    "C:\\Users\\Geoex\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\Geoex\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
-    "C:\\Users\\Geoex\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\Geoex\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Geoex\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.4\\microsoft.data.sqlclient.2.1.4.nupkg.sha512",
     "C:\\Users\\Geoex\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.1.1\\microsoft.data.sqlclient.sni.runtime.2.1.1.nupkg.sha512",
     "C:\\Users\\Geoex\\.nuget\\packages\\microsoft.data.sqlite.core\\6.0.10\\microsoft.data.sqlite.core.6.0.10.nupkg.sha512",
